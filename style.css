@@ -1,0 +1,78 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+}
+
+
+.slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: none;
+    cursor: default;
+}
+
+.slider img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* .X {
+    position: absolute;
+    right: 1%;
+    top: 1%;
+    z-index: 102;
+    pointer-events: auto;
+    cursor: pointer;
+
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    text-shadow:
+        0 0 4px rgba(0, 0, 0, 0.9),
+        0 0 8px rgba(0, 0, 0, 0.6),
+        0 1px 2px rgba(0, 0, 0, 0.9);
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.X:hover {
+    color: #ff5555;
+    transform: scale(1.1);
+}
+
+.X:active {
+    transform: scale(0.95);
+} */
+
+/* Область захвата сверху */
+.drag-region {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 28px;
+    z-index: 100;
+    background: transparent;
+    pointer-events: none;
+    cursor: move;
+}
