@@ -1,0 +1,5 @@
+build/
+myapp
+*.gch
+.vscode/
+bd_cpp/

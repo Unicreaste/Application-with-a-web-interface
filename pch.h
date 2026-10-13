@@ -1,0 +1,14 @@
+#pragma once
+#include <QApplication>
+#include <QWidget>
+#include <QWebEngineView>
+#include <QWebEngineSettings>
+#include <QFileInfo>
+#include <QFileSystemWatcher>
+#include <QUrl>
+#include <QTimer>
+#include <QVBoxLayout>
+#include <QWindow>
+#include <QMouseEvent>
+#include <QDebug>
+#include <QPushButton>
