@@ -26,13 +26,15 @@ TitleBar::TitleBar(QWidget *window) : m_window(window)
     QObject::connect(m_minimizeBtn, &QPushButton::clicked, m_window, &QWidget::showMinimized);
 
     // Кнопка разворачивания и восстановления.
-    m_maximizeBtn = new GlowButton("□", QColor(255, 215, 0), m_window);
+    m_maximizeBtn = new GlowButton("▢", QColor(255, 215, 0), m_window);
 
     QObject::connect(m_maximizeBtn, &QPushButton::clicked, m_window, [this]() {
         if (m_window->isMaximized()) {
             m_window->showNormal();
+            m_maximizeBtn->setText("▢");
         } else {
             m_window->showMaximized();
+            m_maximizeBtn->setText("❐");
         }
     });
 

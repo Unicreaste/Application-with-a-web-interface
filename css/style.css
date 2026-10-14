@@ -2,77 +2,80 @@
     box-sizing: border-box;
 }
 
-html,
 body {
-    width: 100%;
-    height: 100%;
+    background-color: #161616;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     margin: 0;
-    padding: 0;
     overflow: hidden;
-    background: transparent;
+}
+
+body.light {
+    background-color: #dcdcdc;
 }
 
 
-.slider {
-    position: relative;
-    width: 100%;
-    height: 100%;
+#butt {
+    position: fixed;
+    top: 10%;
+    right: 20px;
+    z-index: 10;
     overflow: hidden;
-    border: none;
-    cursor: default;
-}
+    isolation: isolate;
 
-.slider img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-    user-select: none;
-    -webkit-user-drag: none;
-}
-
-/* .X {
-    position: absolute;
-    right: 1%;
-    top: 1%;
-    z-index: 102;
-    pointer-events: auto;
+    font-size: 1rem;
+    padding: 1rem 1rem;
+    box-shadow: 0 1rem 1rem rgba(255, 255, 255, 0.445);
+    border-radius: 5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
     cursor: pointer;
-
-    background: transparent;
     border: none;
-    color: #fff;
-    font-size: 22px;
-    line-height: 1;
-    cursor: pointer;
-    text-shadow:
-        0 0 4px rgba(0, 0, 0, 0.9),
-        0 0 8px rgba(0, 0, 0, 0.6),
-        0 1px 2px rgba(0, 0, 0, 0.9);
-    transition: color 0.15s ease, transform 0.15s ease;
+
+
+    transition:
+        color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
-.X:hover {
-    color: #ff5555;
-    transform: scale(1.1);
-}
-
-.X:active {
-    transform: scale(0.95);
-} */
-
-/* Область захвата сверху */
-.drag-region {
+.clicked {
     position: absolute;
-    top: 0;
     left: 0;
-    width: 100%;
-    height: 28px;
-    z-index: 100;
-    background: transparent;
+    top: 0;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transform-origin: center;
     pointer-events: none;
-    cursor: move;
+    z-index: 1;
+
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+#text {
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Круг, расширяющийся по всей странице */
+.theme-ripple {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transform-origin: center;
+    pointer-events: none;
+    z-index: 5;
+
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+
+    will-change: transform;
 }

@@ -1,94 +1,104 @@
-const girls = [
-    'images/1.webp',
-    'images/2.webp',
-    'images/3.webp'
+
+const colors = [
+    "#dcdcdc", // Светлая тема
+    "#161616"  // Тёмная тема
 ];
 
-const slider = document.getElementById('slider');
-
+let themeIndex = 1;
 let isAnimating = false;
 
-// Создаём все изображения заранее.
-girls.forEach((src, index) => {
-    const img = document.createElement('img');
+const BUTTON = document.getElementById("butt");
+const BODY = document.body;
 
-    img.src = src;
-    img.loading = 'eager';
-    img.style.transform = `translateX(${index * 100}%)`;
+BODY.style.backgroundColor = colors[1];
+BUTTON.style.backgroundColor = colors[1];
+BUTTON.style.color = "#fff";
 
-    slider.appendChild(img);
-});
-
-async function startSlider() {
-    const imgs = Array.from(slider.querySelectorAll('img'));
-
-    // Ждём загрузки и декодирования всех изображений.
-    await Promise.all(
-        imgs.map(async (img) => {
-            try {
-                if (!img.complete) {
-                    await new Promise((resolve, reject) => {
-                        img.addEventListener('load', resolve, { once: true });
-                        img.addEventListener('error', reject, { once: true });
-                    });
-                }
-
-                if (img.naturalWidth > 0) {
-                    await img.decode();
-                }
-            } catch (error) {
-                console.error('Не удалось подготовить изображение:', img.src, error);
-            }
-        })
-    );
-
-    // Только теперь начинаем переключение.
-    setTimeout(() => {
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                setInterval(myCommand, 4000);
-            });
-        });
-    }, 500);
-}
-
-function myCommand() {
+BUTTON.addEventListener("click", (e) => {
     if (isAnimating) return;
 
     isAnimating = true;
 
-    const imgs = Array.from(slider.querySelectorAll('img'));
+    const nextIndex = themeIndex === 1 ? 0 : 1;
+    const nextColor = colors[nextIndex];
 
-    // Сначала включаем transition, не меняя положения картинок.
-    imgs.forEach(img => {
-        img.style.transition = 'transform 0.5s ease';
-    });
+    // Координаты клика относительно окна
+    const x = e.clientX;
+    const y = e.clientY;
 
-    // Даём браузеру применить начальные стили до движения.
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            imgs.forEach(img => {
-                const currentX =
-                    parseInt(img.style.transform.replace('translateX(', '')) || 0;
+    // Максимальный радиус для покрытия всего экрана
+    const maxRadius = Math.ceil(Math.max(
+        Math.hypot(x, y),
+        Math.hypot(innerWidth - x, y),
+        Math.hypot(x, innerHeight - y),
+        Math.hypot(innerWidth - x, innerHeight - y)
+    ));
 
-                img.style.transform = `translateX(${currentX - 100}%)`;
-            });
+    // 1. Создаём круг для всей страницы
+    const pageRipple = document.createElement("div");
+    pageRipple.className = "theme-ripple";
+    pageRipple.style.left = `${x}px`;
+    pageRipple.style.top = `${y}px`;
+    pageRipple.style.backgroundColor = nextColor;
 
-            setTimeout(() => {
-                imgs.forEach(img => {
-                    const currentX =
-                        parseInt(img.style.transform.replace('translateX(', '')) || 0;
+    BODY.appendChild(pageRipple);
 
-                    if (currentX < 0) {
-                        img.style.transition = 'none';
-                        img.style.transform = 'translateX(200%)';
-                    }
-                });
+    // 2. Находим координаты клика внутри кнопки
+    const rect = BUTTON.getBoundingClientRect();
+    const buttonX = x - rect.left;
+    const buttonY = y - rect.top;
 
-                isAnimating = false;
-            }, 550);
-        });
-    });
-}
+    // 3. Создаём круг внутри кнопки
+    const buttonRipple = document.createElement("span");
+    buttonRipple.className = "clicked";
+    buttonRipple.style.left = `${buttonX}px`;
+    buttonRipple.style.top = `${buttonY}px`;
+    buttonRipple.style.backgroundColor = nextColor;
 
-startSlider();
+    BUTTON.appendChild(buttonRipple);
+
+    // Рассчитываем радиус, достаточный для покрытия кнопки
+    const buttonRadius = Math.ceil(Math.max(
+        Math.hypot(buttonX, buttonY),
+        Math.hypot(rect.width - buttonX, buttonY),
+        Math.hypot(buttonX, rect.height - buttonY),
+        Math.hypot(rect.width - buttonX, rect.height - buttonY)
+    ));
+
+    // Фиксируем начальное состояние обоих кругов
+    pageRipple.offsetWidth;
+    buttonRipple.offsetWidth;
+
+    // 4. Запускаем обе анимации одновременно
+    pageRipple.style.transform =
+        `translate(-50%, -50%) scale(${maxRadius})`;
+
+    buttonRipple.style.transform =
+        `translate(-50%, -50%) scale(${buttonRadius})`;
+
+    // 5. После завершения перехода фиксируем новую тему
+
+    pageRipple.addEventListener("transitionend", (event) => {
+        if (event.propertyName !== "transform") return;
+
+        // Сначала закрепляем новый фон под кругом
+        BODY.classList.toggle("light", nextIndex === 0);
+        BODY.style.backgroundColor = nextColor;
+
+        BUTTON.style.backgroundColor = nextColor;
+        BUTTON.style.color = nextIndex === 0 ? "#000000ff" : "#fff";
+
+        BUTTON.style.boxShadow = nextIndex === 0
+            ? "0 1rem 2rem rgba(0, 0, 0, 0.5)"
+            : "0 1rem 2rem rgba(255, 255, 255, 0.5)";
+
+        themeIndex = nextIndex;
+
+        // Удаляем круги после фиксации фона
+        pageRipple.remove();
+        buttonRipple.remove();
+
+        isAnimating = false;
+    }, { once: true });
+
+});

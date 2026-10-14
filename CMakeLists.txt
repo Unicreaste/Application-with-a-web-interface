@@ -19,6 +19,9 @@ add_executable(myapp
     src/mainwindow.h
     src/mainwindow.cpp
 
+    src/resizehandle.h
+    src/resizehandle.cpp
+
     src/glowbutton.h
     src/glowbutton.cpp
 
