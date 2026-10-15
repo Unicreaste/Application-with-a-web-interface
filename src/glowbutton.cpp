@@ -9,7 +9,7 @@
 GlowButton::GlowButton(const QString &text, const QColor &glowColor, QWidget *parent)
     : QPushButton(text, parent), m_glowColor(glowColor)
 {
-    setFixedSize(30, 30);
+    setFixedSize(22, 22);
     setCursor(Qt::PointingHandCursor);
     setFocusPolicy(Qt::NoFocus);
 
@@ -20,9 +20,9 @@ GlowButton::GlowButton(const QString &text, const QColor &glowColor, QWidget *pa
         QPushButton {
             background-color: %1;
             border: 1px solid %2;
-            border-radius: 12px;
+            border-radius: 11px;
             color: %3;
-            font-size: 16px;
+            font-size: 13px;
             font-weight: bold;
             padding: 0px;
         }
@@ -58,9 +58,9 @@ GlowButton::GlowButton(const QString &text, const QColor &glowColor, QWidget *pa
                 QPushButton {
                     background-color: %1;
                     border: 1px solid %2;
-                    border-radius: 12px;
+                    border-radius: 11px;
                     color: %3;
-                    font-size: 16px;
+                    font-size: 13px;
                     font-weight: bold;
                     padding: 0px;
                 }

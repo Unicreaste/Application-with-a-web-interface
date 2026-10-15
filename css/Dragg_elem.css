@@ -1,0 +1,222 @@
+
+
+.tasks__title {
+  margin: 50px 0 20px 0;
+
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.container {
+  position: relative;
+  /* контейнер — система координат */
+  width: 100%;
+  min-height: 100vh;
+}
+
+.tasks__list {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.tasks__item {
+  position: absolute;
+  /* ← ключевое: блоки вырываются из потока */
+  width: 200px;
+  height: 200px;
+  padding: 5px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  border: 2px dashed #30524a;
+  border-radius: 10px;
+  cursor: move;
+  background-color: #dff2ef;
+  box-sizing: border-box;
+
+  /* убираем margin-bottom — он больше не нужен */
+  margin: 0;
+
+  transition: background-color 0.5s, box-shadow 0.2s;
+  user-select: none;
+}
+
+.tasks__item.selected {
+  opacity: 0.85;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  cursor: grabbing;
+}
+
+#box-img {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 10px;
+  padding: 5px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+
+
+/* Блок с часами */
+.clock-block {
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.clock-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.clock-face {
+  position: relative;
+  width: 125px;
+  height: 125px;
+  border: 3px solid #30524a;
+  border-radius: 50%;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.number {
+  position: absolute;
+  font-size: 13px;
+  font-weight: bold;
+  color: #30524a;
+  transform: translate(-50%, -50%);
+}
+
+.number-12 {
+  top: 12%;
+  left: 50%;
+}
+
+.number-3 {
+  top: 50%;
+  left: 88%;
+}
+
+.number-6 {
+  top: 88%;
+  left: 50%;
+}
+
+.number-9 {
+  top: 50%;
+  left: 12%;
+}
+
+.hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: 50% 100%;
+  border-radius: 5px;
+}
+
+.hand-hour {
+  width: 4px;
+  height: 30px;
+  background: #30524a;
+}
+
+.hand-minute {
+  width: 3px;
+  height: 42px;
+  background: #30524a;
+}
+
+.hand-second {
+  width: 2px;
+  height: 48px;
+  background: #e53935;
+}
+
+.clock-center {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: #30524a;
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#clock {
+  font-size: 18px;
+  font-weight: bold;
+  color: #30524a;
+  font-variant-numeric: tabular-nums;
+}
+
+
+
+
+
+.chat-input-container {
+  display: flex;
+  align-items: flex-end;
+  background-color: #f0f2f5;
+  padding: 10px;
+  border-radius: 24px;
+  max-width: 600px;
+  font-family: sans-serif;
+}
+
+.chat-input {
+  flex: 1;
+  min-height: 20px;
+  max-height: 120px;
+  /* Ограничивает рост поля вверх */
+  overflow-y: auto;
+  /* Добавляет прокрутку, если текст слишком длинный */
+  background-color: #ffffff;
+  padding: 10px 15px;
+  border-radius: 20px;
+  font-size: 15px;
+  outline: none;
+  white-space: pre-wrap;
+  /* Сохраняет переносы строк */
+  word-break: break-word;
+}
+
+/* Эффект подсказки (placeholder) для contenteditable */
+.chat-input:empty:before {
+  content: attr(placeholder);
+  color: #8e8e93;
+}
+
+.send-btn {
+  background: none;
+  border: none;
+  color: #007aff;
+  /* Цвет иконки отправки */
+  cursor: pointer;
+  padding: 8px;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.send-btn:hover {
+  color: #0056b3;
+}

@@ -1,17 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="css/style.css">
+    <title>Задачи и чат</title>
+    <link rel="stylesheet" href="css/but_ligth_style.css">
+    <link rel="stylesheet" href="css/Dragg_elem.css">
+    <link rel="stylesheet" href="css/Chat_style.css">
 </head>
 
 <body>
     <button id="butt">
         <span id="text">☀</span>
     </button>
+    <div class="container">
+        <section class="tasks">
+            <ul class="tasks__list">
 
-    <script src="js/script.js"></script>
+                <!-- Часы -->
+                <li class="tasks__item clock-block">
+                    <div class="clock-widget">
+                        <div class="clock-face">
+                            <span class="number number-12">12</span>
+                            <span class="number number-3">3</span>
+                            <span class="number number-6">6</span>
+                            <span class="number number-9">9</span>
+                            <span class="hand hand-hour" id="hour-hand"></span>
+                            <span class="hand hand-minute" id="minute-hand"></span>
+                            <span class="hand hand-second" id="second-hand"></span>
+                            <span class="clock-center"></span>
+                        </div>
+                        <div id="clock">00:00:00</div>
+                    </div>
+                </li>
+
+                <!-- Картинка -->
+                <img src="images/4.webp" alt="Красивый пейзаж" id="box-img" class="tasks__item">
+
+                <!-- ЧАТ -->
+                <li class="tasks__item chat-block">
+                    <div class="chat-messages" id="chat-messages"></div>
+                    <div class="chat-input-row">
+                        <div class="chat-input" id="chat-input" contenteditable="true"
+                            placeholder="Напишите сообщение..."></div>
+                        <button class="send-btn" id="send-btn" title="Отправить">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path fill="currentColor" d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
+                            </svg>
+                        </button>
+                    </div>
+                </li>
+
+            </ul>
+        </section>
+    </div>
+
+    <script src="js/drag_elem.js"></script>
+    <!-- Логика чата -->
+    <script src="js/chat.js"></script>
+    <!-- изменение темы чата -->
+    <script src="js/button_light.js"></script>
 </body>
 
 </html>

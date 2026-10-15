@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     updateResizeHandles();
 
     m_fileWatcher = new FileWatcher(
-        {m_htmlPath, m_dir + "/css/style.css", m_dir + "/js/script.js", m_dir + "/images/1.webp",
+        {m_htmlPath, m_dir + "/css/Dragg_elem.css", m_dir + "/js/drag_elem.js", m_dir + "/images/1.webp",
          m_dir + "/images/2.webp", m_dir + "/images/3.webp"},
         [this]() {
             qDebug() << "Reloading page after file changes";
