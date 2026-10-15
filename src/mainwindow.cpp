@@ -4,6 +4,10 @@
 #include "titlebar.h"
 #include "filewatcher.h"
 #include "pageloader.h"
+#include "database_manager.h"
+#include "task_positions.h"
+#include "chat_manager.h"
+#include "theme_manager.h"
 
 #include <QWebEngineView>
 #include <QWebEngineSettings>
@@ -16,6 +20,15 @@
 #include <QApplication>
 #include <QWindow>
 
+#include <QStandardPaths>
+#include <QDir>
+#include <QDebug>
+#include <memory>
+#include <QWebChannel>
+#include <QWebEnginePage>
+#include <QWebEngineScript>
+#include <QWebEngineScriptCollection>
+
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
     setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
@@ -26,6 +39,24 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_htmlPath = QFileInfo("index.html").absoluteFilePath();
     m_dir = QFileInfo(m_htmlPath).absolutePath();
 
+    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
+    qDebug() << "App data directory:" << dataDir;
+
+    if (!QDir().mkpath(dataDir)) {
+        qDebug() << "Failed to create directory:" << dataDir;
+    }
+
+    QString dbPath = dataDir + "/motiondesk.db";
+
+    m_database = std::make_unique<Database>(dbPath.toStdString());
+
+    if (!m_database->isOpen()) {
+        qDebug() << "Failed to open database:" << dbPath;
+    } else {
+        qDebug() << "Database opened successfully:" << dbPath;
+    }
+
     qDebug() << "HTML path:" << m_htmlPath;
     qDebug() << "HTML exists:" << QFileInfo::exists(m_htmlPath);
 
@@ -35,6 +66,76 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 
     m_web = new QWebEngineView(this);
     layout->addWidget(m_web);
+
+    if (m_database && m_database->isOpen()) {
+        m_taskPositions = std::make_unique<TaskPositions>(*m_database);
+
+        // Создаём менеджер чата до регистрации в WebChannel
+        m_chatManager = std::make_unique<ChatManager>(*m_database);
+        m_themeManager = std::make_unique<ThemeManager>();
+
+        m_webChannel = new QWebChannel(this);
+
+        m_webChannel->registerObject(QStringLiteral("taskPositions"), m_taskPositions.get());
+        m_webChannel->registerObject(QStringLiteral("chatManager"), m_chatManager.get());
+        m_webChannel->registerObject(QStringLiteral("themeManager"), m_themeManager.get());
+
+        m_web->page()->setWebChannel(m_webChannel);
+
+        qDebug() << "Task positions and chat bridge initialized";
+    }
+
+    QWebEngineScript themeScript;
+    themeScript.setName(QStringLiteral("initial-theme"));
+    themeScript.setInjectionPoint(QWebEngineScript::DocumentCreation);
+    themeScript.setWorldId(QWebEngineScript::MainWorld);
+    themeScript.setRunsOnSubFrames(false);
+
+    const QString theme = m_themeManager->currentTheme();
+
+    QString script = QStringLiteral(R"JS(
+(function() {
+    const theme = "%1";
+
+    function applyInitialTheme() {
+        const root = document.documentElement;
+
+        if (!root) {
+            requestAnimationFrame(applyInitialTheme);
+            return;
+        }
+
+        root.dataset.theme = theme;
+
+        const style = document.createElement('style');
+        style.id = 'initial-theme-no-animation';
+        style.textContent =
+            '*, *::before, *::after {' +
+            ' transition: none !important;' +
+            ' animation: none !important;' +
+            '}';
+
+        (document.head || root).appendChild(style);
+
+        window.addEventListener('load', function() {
+            requestAnimationFrame(function() {
+                const initialStyle =
+                    document.getElementById('initial-theme-no-animation');
+
+                if (initialStyle)
+                    initialStyle.remove();
+            });
+        }, { once: true });
+    }
+
+    applyInitialTheme();
+})();
+)JS")
+                         .arg(theme);
+
+    themeScript.setSourceCode(script);
+
+    m_web->page()->scripts().insert(themeScript);
 
     m_web->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessFileUrls, true);
     m_web->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
@@ -69,6 +170,8 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_pageLoader = new PageLoader(m_web, m_htmlPath, this);
     m_pageLoader->loadPage();
 }
+
+MainWindow::~MainWindow() = default;
 
 void
 MainWindow::resizeEvent(QResizeEvent *event)

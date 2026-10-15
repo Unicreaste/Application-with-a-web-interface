@@ -3,7 +3,8 @@
 }
 
 body {
-    background-color: #161616;
+    background-color: var(--bg-page);
+    color: var(--block-text);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -26,18 +27,35 @@ body.light {
     isolation: isolate;
 
     font-size: 1rem;
-    padding: 1rem 1rem;
-    box-shadow: 0 1rem 1rem rgba(255, 255, 255, 0.445);
+    padding: 1rem;
     border-radius: 5rem;
     text-transform: uppercase;
     letter-spacing: 0.2rem;
     cursor: pointer;
     border: none;
 
+    background-color: #161616;
+    color: #ffffff;
+    box-shadow: 0 1rem 1rem rgba(255, 255, 255, 0.445);
 
     transition:
         color 0.3s ease,
+        background-color 0.3s ease,
         box-shadow 0.3s ease;
+}
+
+/* Светлая тема: белая кнопка, тёмная тень */
+html[data-theme="light"] #butt {
+    background-color: #ffffff;
+    color: #161616;
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.5);
+}
+
+/* Тёмная тема: тёмная кнопка, светлая тень */
+html[data-theme="dark"] #butt {
+    background-color: #161616;
+    color: #ffffff;
+    box-shadow: 0 1rem 2rem rgba(255, 255, 255, 0.35);
 }
 
 .clicked {
@@ -78,4 +96,13 @@ body.light {
     transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
 
     will-change: transform;
+}
+
+
+/* Мгновенное изменение цветов при переключении темы */
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+    transition: none !important;
+    animation: none !important;
 }

@@ -13,7 +13,7 @@ GlowButton::GlowButton(const QString &text, const QColor &glowColor, QWidget *pa
     setCursor(Qt::PointingHandCursor);
     setFocusPolicy(Qt::NoFocus);
 
-    m_background = QColor(0, 0, 0, 110);
+    m_background = QColor("#263a35");
     m_foreground = QColor(Qt::white);
 
     setStyleSheet(QString(R"(
@@ -45,35 +45,9 @@ GlowButton::GlowButton(const QString &text, const QColor &glowColor, QWidget *pa
     m_animation->setEndValue(1.0);
     m_animation->setEasingCurve(QEasingCurve::OutCubic);
 
-    connect(m_animation, &QVariantAnimation::valueChanged, this, [this](const QVariant &value) {
-        const qreal t = value.toReal();
-
-        QColor bg = m_glowColor;
-        bg.setAlpha(qRound(35 + 220 * t));
-
-        const int channel = qRound(255 * (1.0 - t));
-        QColor fg(channel, channel, channel);
-
-        setStyleSheet(QString(R"(
-                QPushButton {
-                    background-color: %1;
-                    border: 1px solid %2;
-                    border-radius: 11px;
-                    color: %3;
-                    font-size: 13px;
-                    font-weight: bold;
-                    padding: 0px;
-                }
-            )")
-                          .arg(bg.name(QColor::HexArgb), m_glowColor.name(), fg.name()));
-
-        m_shadow->setBlurRadius(12 + 12 * t);
-
-        QColor glow = m_glowColor;
-        glow.setAlpha(qRound(110 + 145 * t));
-        m_shadow->setColor(glow);
-    });
-
+    connect(m_animation, &QVariantAnimation::valueChanged, this,
+            [this](const QVariant &value) { updateAppearance(value.toReal()); });
+    updateAppearance(0.0);
     m_animation->setCurrentTime(0);
 }
 
@@ -100,4 +74,33 @@ GlowButton::animateTo(qreal target)
     m_animation->setStartValue(current.isValid() ? current : QVariant(0.0));
     m_animation->setEndValue(target);
     m_animation->start();
+}
+
+void
+GlowButton::updateAppearance(qreal t)
+{
+    QColor bg = m_glowColor;
+    bg.setAlpha(qRound(35 + 220 * t));
+
+    const int channel = qRound(255 * (1.0 - t));
+    QColor fg(channel, channel, channel);
+
+    setStyleSheet(QString(R"(
+        QPushButton {
+            background-color: %1;
+            border: 1px solid %2;
+            border-radius: 11px;
+            color: %3;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 0px;
+        }
+    )")
+                      .arg(bg.name(QColor::HexArgb), m_glowColor.name(), fg.name()));
+
+    m_shadow->setBlurRadius(12 + 12 * t);
+
+    QColor glow = m_glowColor;
+    glow.setAlpha(qRound(110 + 145 * t));
+    m_shadow->setColor(glow);
 }

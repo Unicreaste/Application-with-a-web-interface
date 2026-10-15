@@ -18,7 +18,7 @@
             <ul class="tasks__list">
 
                 <!-- Часы -->
-                <li class="tasks__item clock-block">
+                <li class="tasks__item clock-block" id="task-clock">
                     <div class="clock-widget">
                         <div class="clock-face">
                             <span class="number number-12">12</span>
@@ -35,10 +35,11 @@
                 </li>
 
                 <!-- Картинка -->
-                <img src="images/4.webp" alt="Красивый пейзаж" id="box-img" class="tasks__item">
+                <img src="images/5.webp" alt="Красивый пейзаж" id="task-image1" class="tasks__item">
+                <img src="images/4.webp" alt="Красивый пейзаж" id="task-image2" class="tasks__item">
 
                 <!-- ЧАТ -->
-                <li class="tasks__item chat-block">
+                <li class="tasks__item chat-block" id="task-chat">
                     <div class="chat-messages" id="chat-messages"></div>
                     <div class="chat-input-row">
                         <div class="chat-input" id="chat-input" contenteditable="true"
@@ -55,10 +56,10 @@
         </section>
     </div>
 
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script src="js/bridge.js"></script>
     <script src="js/drag_elem.js"></script>
-    <!-- Логика чата -->
     <script src="js/chat.js"></script>
-    <!-- изменение темы чата -->
     <script src="js/button_light.js"></script>
 </body>
 

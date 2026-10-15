@@ -1,156 +1,266 @@
 const tasksListElement = document.querySelector('.tasks__list');
-const taskElements = tasksListElement.querySelectorAll('.tasks__item');
+const taskElements = tasksListElement
+    ? Array.from(tasksListElement.querySelectorAll('.tasks__item'))
+    : [];
 
-// Счётчики для первичной раскладки блоков "лесенкой"
-let offsetIndex = 0;
-
-taskElements.forEach((task) => {
-    // начальные координаты (можно поменять под себя)
-    task.style.left = (20 + offsetIndex * 30) + 'px';
-    task.style.top = (20 + offsetIndex * 30) + 'px';
-    offsetIndex++;
-
-    task.draggable = false; // отключаем HTML5 drag — будем двигать мышью
-    task.addEventListener('mousedown', startDrag);
-});
-
+let taskPositions = null;
 let activeElement = null;
 let shiftX = 0;
 let shiftY = 0;
 
-function startDrag(evt) {
-    // не мешаем вводу в чат
-    if (evt.target.closest('.chat-input, .send-btn, .chat-messages')) return;
+let positionsLoaded = false;
 
-    // только левая кнопка мыши
-    if (evt.button !== 0) return;
+// --------------------------------------------------
+// ИНИЦИАЛИЗАЦИЯ БЛОКОВ
+// --------------------------------------------------
+
+function initializeTasks(positions = {}) {
+    if (!tasksListElement) {
+        console.error('Не найден элемент .tasks__list');
+        return;
+    }
+
+    taskElements.forEach((task, index) => {
+        // Стабильный ID нужен для сохранения позиции в SQLite.
+        if (!task.id) {
+            task.id = `task-${index}`;
+        }
+
+        // Отключаем встроенное HTML-перетаскивание.
+        task.draggable = false;
+
+        // Устанавливаем начальные координаты.
+        if (!task.style.left) {
+            task.style.left = `${20 + index * 30}px`;
+        }
+
+        if (!task.style.top) {
+            task.style.top = `${20 + index * 30}px`;
+        }
+
+        // Восстанавливаем сохранённую позицию.
+        const saved = positions[task.id];
+
+        if (saved) {
+            task.style.left = `${saved.left}px`;
+            task.style.top = `${saved.top}px`;
+        }
+
+        // Не назначаем один обработчик несколько раз.
+        if (task.dataset.dragInitialized !== 'true') {
+            task.addEventListener('mousedown', startDrag);
+            task.dataset.dragInitialized = 'true';
+        }
+    });
+
+    console.log('Блоки готовы к перетаскиванию:', taskElements.length);
+}
+
+// Инициализируем блоки сразу, не ожидая подключения к C++.
+initializeTasks({});
+
+// --------------------------------------------------
+// ПОДКЛЮЧЕНИЕ К QT WEBCHANNEL
+// --------------------------------------------------
+
+function initDragTasks(channel) {
+    if (!channel || !channel.objects) {
+        console.error('Некорректный объект Qt WebChannel');
+        return;
+    }
+
+    taskPositions = channel.objects.taskPositions;
+
+    if (!taskPositions) {
+        console.error('taskPositions не зарегистрирован в C++');
+        return;
+    }
+
+    if (positionsLoaded) {
+        return;
+    }
+
+    positionsLoaded = true;
+
+    taskPositions.loadPositions(function (positions) {
+        positions = positions || {};
+
+        taskElements.forEach((task, index) => {
+            const saved = positions[task.id];
+
+            if (saved) {
+                task.style.left = `${saved.left}px`;
+                task.style.top = `${saved.top}px`;
+            } else {
+                // Сохраняем начальную позицию только после загрузки
+                // существующих позиций из базы.
+                taskPositions.savePosition(
+                    task.id,
+                    parseFloat(task.style.left) || 0,
+                    parseFloat(task.style.top) || 0
+                );
+            }
+        });
+
+        console.log('Позиции блоков загружены из SQLite');
+    });
+}
+
+// Используем только общий канал, созданный в bridge.js.
+if (window.appChannelReady) {
+    window.appChannelReady
+        .then(initDragTasks)
+        .catch(error => {
+            console.error('Ошибка подключения WebChannel:', error);
+        });
+} else {
+    console.warn(
+        'appChannelReady не найден. Перетаскивание работает без сохранения позиций.'
+    );
+}
+
+// --------------------------------------------------
+// НАЧАЛО ПЕРЕТАСКИВАНИЯ
+// --------------------------------------------------
+
+function startDrag(evt) {
+    // Только левая кнопка мыши.
+    if (evt.button !== 0) {
+        return;
+    }
+
+    // Не перетаскиваем блок при взаимодействии с чатом.
+    if (evt.target.closest(
+        '.chat-input, .send-btn, .chat-messages'
+    )) {
+        return;
+    }
 
     activeElement = evt.currentTarget;
+
     activeElement.classList.add('selected');
 
     const rect = activeElement.getBoundingClientRect();
-    const parentRect = tasksListElement.getBoundingClientRect();
 
-    // смещение курсора внутри блока
     shiftX = evt.clientX - rect.left;
     shiftY = evt.clientY - rect.top;
 
-    // запоминаем, что координаты считаем относительно родителя
-    activeElement.dataset.parentLeft = parentRect.left;
-    activeElement.dataset.parentTop = parentRect.top;
-
     document.addEventListener('mousemove', onDrag);
     document.addEventListener('mouseup', stopDrag);
+
+    evt.preventDefault();
 }
 
+// --------------------------------------------------
+// ПЕРЕМЕЩЕНИЕ БЛОКА
+// --------------------------------------------------
+
 function onDrag(evt) {
-    if (!activeElement) return;
+    if (!activeElement || !tasksListElement) {
+        return;
+    }
 
     const parentRect = tasksListElement.getBoundingClientRect();
 
     let newLeft = evt.clientX - parentRect.left - shiftX;
     let newTop = evt.clientY - parentRect.top - shiftY;
 
-    // ограничим в пределах списка (по желанию можно убрать)
-    const maxLeft = tasksListElement.clientWidth - activeElement.offsetWidth;
-    const maxTop = tasksListElement.clientHeight - activeElement.offsetHeight;
+    const maxLeft = Math.max(
+        0,
+        tasksListElement.clientWidth - activeElement.offsetWidth
+    );
+
+    const maxTop = Math.max(
+        0,
+        tasksListElement.clientHeight - activeElement.offsetHeight
+    );
 
     newLeft = Math.max(0, Math.min(newLeft, maxLeft));
     newTop = Math.max(0, Math.min(newTop, maxTop));
 
-    activeElement.style.left = newLeft + 'px';
-    activeElement.style.top = newTop + 'px';
+    activeElement.style.left = `${newLeft}px`;
+    activeElement.style.top = `${newTop}px`;
 }
+
+// --------------------------------------------------
+// ЗАВЕРШЕНИЕ ПЕРЕТАСКИВАНИЯ И СОХРАНЕНИЕ ПОЗИЦИИ
+// --------------------------------------------------
 
 function stopDrag() {
     if (activeElement) {
-        activeElement.classList.remove('selected');
+        const task = activeElement;
+
+        task.classList.remove('selected');
+
+        if (
+            taskPositions &&
+            typeof taskPositions.savePosition === 'function'
+        ) {
+            taskPositions.savePosition(
+                task.id,
+                parseFloat(task.style.left) || 0,
+                parseFloat(task.style.top) || 0
+            );
+        }
+
         activeElement = null;
     }
+
     document.removeEventListener('mousemove', onDrag);
     document.removeEventListener('mouseup', stopDrag);
 }
 
-// запрещаем стандартное перетаскивание картинок
+// --------------------------------------------------
+// ЗАПРЕТ СТАНДАРТНОГО ПЕРЕТАСКИВАНИЯ ИЗОБРАЖЕНИЙ
+// --------------------------------------------------
+
 document.querySelectorAll('img').forEach(img => {
-    img.addEventListener('dragstart', e => e.preventDefault());
+    img.addEventListener('dragstart', evt => {
+        evt.preventDefault();
+    });
 });
 
-// <--------------------- содержание блоков ----------------------->
-
-
-// <--------------------- часы ----------------------->
+// --------------------------------------------------
+// ЧАСЫ
+// --------------------------------------------------
 
 function updateClock() {
+    const clock = document.getElementById('clock');
+
+    if (!clock) {
+        return;
+    }
+
     const now = new Date();
 
-    // Цифровое время по часовому поясу устройства
-    const timeString = now.toLocaleTimeString('ru-RU', {
+    clock.textContent = now.toLocaleTimeString('ru-RU', {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit'
     });
 
-    document.getElementById('clock').textContent = timeString;
-
-    // Положение стрелок
     const seconds = now.getSeconds();
     const minutes = now.getMinutes();
     const hours = now.getHours() % 12;
 
-    const secondAngle = seconds * 6;
-    const minuteAngle = minutes * 6 + seconds * 0.1;
-    const hourAngle = hours * 30 + minutes * 0.5;
+    const secondHand = document.getElementById('second-hand');
+    const minuteHand = document.getElementById('minute-hand');
+    const hourHand = document.getElementById('hour-hand');
 
-    document.getElementById('second-hand')
-        .style.transform = `rotate(${secondAngle}deg)`;
+    if (secondHand) {
+        secondHand.style.transform = `rotate(${seconds * 6}deg)`;
+    }
 
-    document.getElementById('minute-hand')
-        .style.transform = `rotate(${minuteAngle}deg)`;
+    if (minuteHand) {
+        minuteHand.style.transform =
+            `rotate(${minutes * 6 + seconds * 0.1}deg)`;
+    }
 
-    document.getElementById('hour-hand')
-        .style.transform = `rotate(${hourAngle}deg)`;
+    if (hourHand) {
+        hourHand.style.transform =
+            `rotate(${hours * 30 + minutes * 0.5}deg)`;
+    }
 }
 
 updateClock();
 setInterval(updateClock, 1000);
-
-
-
-// <--------------------- картинка ----------------------->
-
-
-(function () {
-    const input = document.getElementById('chat-input');
-    const sendBtn = document.getElementById('send-btn');
-    const messages = document.getElementById('chat-messages');
-
-    function sendMessage() {
-        const text = input.innerText.trim();
-        if (!text) return;
-
-        const msg = document.createElement('div');
-        msg.className = 'message own';
-        msg.textContent = text;
-        messages.appendChild(msg);
-
-        // очистить поле
-        input.innerHTML = '';
-
-        // прокрутить вниз
-        messages.scrollTop = messages.scrollHeight;
-
-        // вернуть фокус в поле ввода
-        input.focus();
-    }
-
-    sendBtn.addEventListener('click', sendMessage);
-
-    // Enter — отправить, Shift+Enter — перенос строки
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
-})();

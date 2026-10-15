@@ -8,6 +8,9 @@
 #include <QList>
 
 #include "resizehandle.h"
+#include "database_manager.h"
+#include "theme_manager.h"
+#include <memory>
 
 class QWebEngineView;
 class TitleBar;
@@ -16,10 +19,15 @@ class PageLoader;
 class QResizeEvent;
 class QMouseEvent;
 
+class QWebChannel;
+class TaskPositions;
+class ChatManager;
+
 class MainWindow : public QWidget
 {
   public:
     explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override;
 
   protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -36,6 +44,14 @@ class MainWindow : public QWidget
         TopEdge = 4,
         BottomEdge = 8
     };
+
+    std::unique_ptr<Database> m_database;
+    std::unique_ptr<TaskPositions> m_taskPositions;
+
+    std::unique_ptr<ChatManager> m_chatManager;
+    std::unique_ptr<ThemeManager> m_themeManager;
+
+    QWebChannel *m_webChannel = nullptr;
 
     int resizeEdgeAt(const QPoint &pos) const;
     void resizeWindow(const QPoint &globalPos);
