@@ -11,6 +11,11 @@ find_package(Qt6 REQUIRED COMPONENTS
     Core
     Widgets
     WebEngineWidgets
+    WebChannel
+)
+
+find_package(
+    SQLite3 REQUIRED
 )
 
 add_executable(myapp
@@ -18,6 +23,9 @@ add_executable(myapp
 
     src/mainwindow.h
     src/mainwindow.cpp
+
+    src/resizehandle.h
+    src/resizehandle.cpp
 
     src/glowbutton.h
     src/glowbutton.cpp
@@ -33,12 +41,29 @@ add_executable(myapp
 
     src/pageloader.h
     src/pageloader.cpp
+
+    src/database_manager.h
+    src/database_manager.cpp
+
+    src/task_positions.h
+    src/task_positions.cpp
+
+    src/chat_manager.h
+    src/chat_manager.cpp
+
+    src/theme_manager.cpp
+    src/theme_manager.h
+
+    src/music_bridge.cpp
+    src/music_bridge.h
 )
 
 target_link_libraries(myapp PRIVATE
     Qt6::Core
     Qt6::Widgets
     Qt6::WebEngineWidgets
+    SQLite::SQLite3
+    Qt6::WebChannel
 )
 
 target_include_directories(myapp PRIVATE

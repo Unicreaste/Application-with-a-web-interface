@@ -1,0 +1,320 @@
+:root,
+html[data-theme="dark"] {
+    color-scheme: dark;
+
+    --bg-page: #161616;
+    --block-bg: #1f3d36;
+    --block-border: #4a7c70;
+    --block-text: #e6f2ef;
+    --clock-face-bg: #263a35;
+    --clock-number: #dff2ef;
+    --clock-hand: #dff2ef;
+    --clock-second: #e53935;
+    --chat-bg: #1a1a1a;
+    --chat-msg-bg: #2a2a2a;
+    --chat-msg-own: #30524a;
+    --chat-text: #e6f2ef;
+    --chat-input-bg: #262626;
+    --chat-input-border: #3a3a3a;
+}
+
+/* Светлая тема */
+html[data-theme="light"] {
+    color-scheme: light;
+
+    --bg-page: #dcdcdc;
+    --block-bg: #dff2ef;
+    --block-border: #30524a;
+    --block-text: #1f3d36;
+    --clock-face-bg: #ffffff;
+    --clock-number: #30524a;
+    --clock-hand: #30524a;
+    --clock-second: #e53935;
+    --chat-bg: #ffffff;
+    --chat-msg-bg: #e7f0ee;
+    --chat-msg-own: #6dddc3;
+    --chat-text: #1f3d36;
+    --chat-input-bg: #ffffff;
+    --chat-input-border: #cfe0dc;
+}
+
+
+/* Внешний музыкальный блок */
+.tasks__item.music_box {
+    width: 300px;
+    height: 250px;
+
+    padding: 12px;
+
+    justify-content: stretch;
+    align-items: stretch;
+
+    text-align: left;
+    cursor: move;
+}
+
+/* Внутренний музыкальный плеер */
+.player {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+
+    background: transparent;
+    color: var(--block-text);
+
+    font-family: sans-serif;
+    cursor: default;
+    box-sizing: border-box;
+}
+
+/* Элементы управления */
+.player button,
+.player input {
+    cursor: pointer;
+}
+
+/* Header */
+
+.music-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.music-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.music-status {
+    font-size: 10px;
+    color: #65b99e;
+}
+
+/* Track */
+
+.track-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.track-cover {
+    width: 65px;
+    height: 65px;
+    flex-shrink: 0;
+
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: var(--clock-face-bg);
+    border-radius: 12px;
+
+    color: var(--block-border);
+    font-size: 35px;
+}
+
+.track-cover img {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.track-cover img.loaded {
+    opacity: 1;
+}
+
+.track-details {
+    min-width: 0;
+}
+
+.track-name {
+    font-size: 15px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.track-artist {
+    margin-top: 5px;
+    font-size: 12px;
+    opacity: 0.65;
+}
+
+/* Progress */
+
+.progress-container {
+    width: 100%;
+}
+
+#progress {
+    width: 100%;
+    height: 4px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: var(--block-border);
+}
+
+.time-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 10px;
+    opacity: 0.65;
+}
+
+/* Controls */
+
+.music-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Контейнер кнопок */
+
+.music-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 22px;
+}
+
+/* Общие настройки кнопок */
+
+.music-controls button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0;
+    border: none;
+    outline: none;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease,
+        transform 0.2s ease,
+        box-shadow 0.25s ease;
+}
+
+/* SVG */
+
+.music-controls svg {
+    width: 19px;
+    height: 19px;
+
+    fill: currentColor;
+    stroke: currentColor;
+    stroke-width: 1.2;
+
+    pointer-events: none;
+}
+
+/* Предыдущая и следующая */
+
+.music-controls .control-btn {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    background: var(--clock-face-bg);
+    color: var(--block-text);
+
+    border: 1px solid var(--block-border);
+}
+
+/* Наведение на боковые кнопки */
+
+.music-controls .control-btn:hover {
+    background: var(--chat-msg-own);
+
+    transform: scale(1.08);
+
+    box-shadow: 0 3px 12px color-mix(in srgb, var(--block-border) 25%, transparent);
+}
+
+/* Основная кнопка */
+
+.music-controls .play-button {
+    width: 50px;
+    height: 50px;
+
+    border-radius: 50%;
+
+    background: var(--chat-msg-own);
+    color: var(--block-text);
+
+    box-shadow: 0 3px 12px color-mix(in srgb, var(--block-border) 20%, transparent);
+}
+
+/* SVG основной кнопки */
+
+.music-controls .play-button svg {
+    width: 21px;
+    height: 21px;
+}
+
+/* Наведение */
+
+.music-controls .play-button:hover {
+    transform: scale(1.09);
+
+    box-shadow: 0 4px 18px color-mix(in srgb, var(--block-border) 40%, transparent);
+}
+
+/* Нажатие */
+
+.music-controls button:active {
+    transform: scale(0.93);
+}
+
+.music-controls button:focus-visible {
+    outline: 2px solid var(--block-border);
+    outline-offset: 4px;
+}
+
+.music-controls button:hover {
+    transform: scale(1.15);
+    opacity: 0.7;
+}
+
+
+/* Volume */
+
+.volume-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 15px;
+}
+
+#volume {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    accent-color: var(--block-border);
+}

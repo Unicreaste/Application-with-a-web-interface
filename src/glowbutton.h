@@ -25,6 +25,7 @@ class GlowButton : public QPushButton
 
     QGraphicsDropShadowEffect *m_shadow = nullptr;
     QVariantAnimation *m_animation = nullptr;
+    void updateAppearance(qreal t);
 
     void animateTo(qreal target);
 };
