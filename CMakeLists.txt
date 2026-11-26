@@ -53,6 +53,9 @@ add_executable(myapp
 
     src/theme_manager.cpp
     src/theme_manager.h
+
+    src/music_bridge.cpp
+    src/music_bridge.h
 )
 
 target_link_libraries(myapp PRIVATE

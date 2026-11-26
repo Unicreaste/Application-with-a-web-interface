@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/but_ligth_style.css">
     <link rel="stylesheet" href="css/Dragg_elem.css">
     <link rel="stylesheet" href="css/Chat_style.css">
+    <link rel="stylesheet" href="css/music.css">
 </head>
 
 <body>
@@ -34,9 +35,81 @@
                     </div>
                 </li>
 
+                <li class="tasks__item music_box" id="task-music-box">
+
+                    <div class="player">
+
+                        <div class="track-info">
+                            <div class="track-cover">
+                                <img id="trackCover" alt="Album cover">
+                                <span id="coverFallback">♫</span>
+                            </div>
+
+                            <div class="track-details">
+                                <div class="track-name" id="trackName">
+                                    Unknown track
+                                </div>
+                                <div class="track-artist" id="trackArtist">
+                                    Unknown artist
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="progress-container">
+                            <input type="range" id="progress" min="0" max="100" value="0">
+
+                            <div class="time-info">
+                                <span id="currentTime">0:00</span>
+                                <span id="duration">0:00</span>
+                            </div>
+                        </div>
+
+                        <div class="music-controls">
+
+                            <button id="prev" class="control-btn" type="button" title="Previous"
+                                aria-label="Previous track">
+
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19 20L9 12L19 4V20Z" />
+                                    <path d="M5 19V5" />
+                                </svg>
+
+                            </button>
+
+                            <button id="play" class="play-button" type="button" title="Play/Pause"
+                                aria-label="Play or pause">
+
+                                <svg class="play-icon" viewBox="0 0 24 24">
+                                    <path d="M8 5L20 12L8 19V5Z" />
+                                </svg>
+
+                            </button>
+
+                            <button id="next" class="control-btn" type="button" title="Next" aria-label="Next track">
+
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M5 4L15 12L5 20V4Z" />
+                                    <path d="M19 5V19" />
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+                        <div class="volume-container">
+                            <span>♪</span>
+                            <input type="range" id="volume" min="0" max="1" step="0.01" value="0.7">
+                        </div>
+
+                        <audio id="audio"></audio>
+
+                    </div>
+
+                </li>
+
                 <!-- Картинка -->
                 <img src="images/5.webp" alt="Красивый пейзаж" id="task-image1" class="tasks__item">
-                <img src="images/4.webp" alt="Красивый пейзаж" id="task-image2" class="tasks__item">
+                <img src="images/6.webp" alt="Красивый пейзаж" id="task-image2" class="tasks__item">
 
                 <!-- ЧАТ -->
                 <li class="tasks__item chat-block" id="task-chat">
@@ -61,6 +134,8 @@
     <script src="js/drag_elem.js"></script>
     <script src="js/chat.js"></script>
     <script src="js/button_light.js"></script>
+    <script src="js/jsmediatags.min.js"></script>
+    <script src="js/music.js"></script>
 </body>
 
 </html>

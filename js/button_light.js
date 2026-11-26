@@ -102,6 +102,7 @@
 
         pageRipple.style.transform =
             `translate(-50%, -50%) scale(${maxRadius})`;
+        pageRipple.style.opacity = 0.95
 
         buttonRipple.style.transform =
             `translate(-50%, -50%) scale(${buttonRadius})`;

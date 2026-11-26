@@ -8,6 +8,7 @@
 #include "task_positions.h"
 #include "chat_manager.h"
 #include "theme_manager.h"
+#include "music_bridge.h"
 
 #include <QWebEngineView>
 #include <QWebEngineSettings>
@@ -33,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
     setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     setMinimumSize(400, 300);
-    resize(900, 700);
+    resize(1000, 900);
     setMouseTracking(true);
 
     m_htmlPath = QFileInfo("index.html").absoluteFilePath();
@@ -76,10 +77,15 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 
         m_webChannel = new QWebChannel(this);
 
+        m_musicBridge = new MusicBridge(m_dir, this);
+
+        m_webChannel->registerObject(QStringLiteral("musicBridge"), m_musicBridge);
+
         m_webChannel->registerObject(QStringLiteral("taskPositions"), m_taskPositions.get());
         m_webChannel->registerObject(QStringLiteral("chatManager"), m_chatManager.get());
         m_webChannel->registerObject(QStringLiteral("themeManager"), m_themeManager.get());
 
+        m_web->page()->setWebChannel(m_webChannel);
         m_web->page()->setWebChannel(m_webChannel);
 
         qDebug() << "Task positions and chat bridge initialized";

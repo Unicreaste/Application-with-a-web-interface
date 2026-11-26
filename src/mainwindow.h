@@ -22,6 +22,7 @@ class QMouseEvent;
 class QWebChannel;
 class TaskPositions;
 class ChatManager;
+class MusicBridge;
 
 class MainWindow : public QWidget
 {
@@ -61,6 +62,7 @@ class MainWindow : public QWidget
     TitleBar *m_titleBar = nullptr;
     FileWatcher *m_fileWatcher = nullptr;
     PageLoader *m_pageLoader = nullptr;
+    MusicBridge *m_musicBridge = nullptr;
 
     QList<ResizeHandle *> m_resizeHandles;
 

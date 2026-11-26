@@ -124,12 +124,21 @@ if (window.appChannelReady) {
 // --------------------------------------------------
 
 function startDrag(evt) {
-    // Только левая кнопка мыши.
+
+    // Только левая кнопка мыши
     if (evt.button !== 0) {
         return;
     }
 
-    // Не перетаскиваем блок при взаимодействии с чатом.
+    // Не начинаем перетаскивание при взаимодействии
+    // с интерактивными элементами
+    if (evt.target.closest(
+        'input, button, select, textarea, audio, a, label'
+    )) {
+        return;
+    }
+
+    // Не перетаскиваем блок при взаимодействии с чатом
     if (evt.target.closest(
         '.chat-input, .send-btn, .chat-messages'
     )) {
