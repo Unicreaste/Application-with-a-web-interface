@@ -299,6 +299,15 @@ nextBtn.addEventListener('click', () => {
 });
 
 prevBtn.addEventListener('click', () => {
+    if (audio.currentTime > 3) {
+        audio.currentTime = 0;
+
+        progress.value = 0;
+        currentTimeEl.textContent = '0:00';
+
+        return;
+    }
+
     loadTrack(
         (currentTrack - 1 + playlist.length) % playlist.length
     );

@@ -11,28 +11,60 @@
 </head>
 
 <body>
-    <button id="butt">
-        <span id="text">☀</span>
-    </button>
+    <aside class="side-toolbar" aria-label="Панель инструментов">
+
+        <!-- Смена темы -->
+        <button id="butt" class="side-toolbar__button" type="button" title="Сменить тему" aria-label="Сменить тему">
+            <span id="text">☀</span>
+        </button>
+
+        <!-- Добавление пустого блока -->
+        <button id="add-block-btn" class="add-block-btn" type="button" title="Добавить блок"
+            aria-label="Добавить пустой блок">
+            +
+        </button>
+
+    </aside>
     <div class="container">
         <section class="tasks">
             <ul class="tasks__list">
-
                 <!-- Часы -->
                 <li class="tasks__item clock-block" id="task-clock">
-                    <div class="clock-widget">
-                        <div class="clock-face">
-                            <span class="number number-12">12</span>
-                            <span class="number number-3">3</span>
-                            <span class="number number-6">6</span>
-                            <span class="number number-9">9</span>
-                            <span class="hand hand-hour" id="hour-hand"></span>
-                            <span class="hand hand-minute" id="minute-hand"></span>
-                            <span class="hand hand-second" id="second-hand"></span>
-                            <span class="clock-center"></span>
-                        </div>
-                        <div id="clock">00:00:00</div>
+
+                    <!-- Аналоговый циферблат -->
+                    <div class="clock-face">
+                        <div class="clock-marks" id="clock-marks"></div>
+
+                        <span class="number number-12">12</span>
+                        <span class="number number-3">3</span>
+                        <span class="number number-6">6</span>
+                        <span class="number number-9">9</span>
+
+                        <span class="hand hand-hour" id="hour-hand"></span>
+                        <span class="hand hand-minute" id="minute-hand"></span>
+                        <span class="hand hand-second" id="second-hand"></span>
+
+                        <span class="clock-center"></span>
+
                     </div>
+
+                    <!-- Цифровая информация -->
+                    <div class="clock-info">
+
+                        <div class="clock-label">LOCAL TIME</div>
+
+                        <div id="clock">00:00:00</div>
+
+                        <div class="clock-weekday" id="clock-weekday">
+                            --
+                        </div>
+
+                        <div class="clock-date" id="clock-date">
+                            --
+                        </div>
+
+                    </div>
+
                 </li>
 
                 <li class="tasks__item music_box" id="task-music-box">

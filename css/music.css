@@ -106,8 +106,8 @@ html[data-theme="light"] {
 }
 
 .track-cover {
-    width: 65px;
-    height: 65px;
+    width: 80px;
+    height: 80px;
     flex-shrink: 0;
 
     position: relative;

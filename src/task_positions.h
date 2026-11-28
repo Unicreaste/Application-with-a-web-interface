@@ -17,6 +17,8 @@ class TaskPositions : public QObject
 
     Q_INVOKABLE void savePosition(const QString &taskId, double x, double y);
 
+    Q_INVOKABLE void deletePosition(const QString &taskId);
+
   private:
     Database &m_database;
 };

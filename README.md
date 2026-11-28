@@ -28,4 +28,4 @@ Build and Run (Fedora Linux)
 3. Build
 `cmake --build build -j$(nproc)`
 4. Run
-`./build/MotionDesk`
+`./build/myapp`
